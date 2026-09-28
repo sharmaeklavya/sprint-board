@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sprint Board</title>
+<style>
+:root{--bg:#faf9f7;--surface:#fff;--soft:#f4f2ee;--line:#e9e6e0;--fg:#24211d;--mut:#8a857d;--acc:#4f6bed;--accbg:#eef1ff;--warn:#c8553d;--warnbg:#fdf0ec;--r:12px}
+@media(prefers-color-scheme:dark){:root{--bg:#151412;--surface:#1e1d1a;--soft:#262421;--line:#2d2b27;--fg:#ece9e4;--mut:#8f8a82;--acc:#8ea2ff;--accbg:#23263a;--warn:#e88a76;--warnbg:#2c1f1c}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:32px 24px 48px}
+.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between}
+.top>div:first-child{flex:1 1 300px;min-width:0}
+h1{margin:0;font-size:24px;font-weight:600;letter-spacing:-.02em}
+.ghost{width:100%;background:none;border:1px solid transparent;border-radius:8px;padding:4px 8px;margin-left:-8px;color:var(--mut);font-size:14px}
+.ghost:hover,.ghost:focus{border-color:var(--line);outline:none;background:var(--surface)}
+.bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:14px 0 6px}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .3s}
+.barlbl{font-size:12px;color:var(--mut)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s;white-space:nowrap;min-height:40px}
+.btn:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.main{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.main:hover:not(:disabled){color:#fff;opacity:.9}
+.btn.danger{color:var(--warn)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:24px 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.stat b{display:block;font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.2}
+.stat span{font-size:12.5px;color:var(--mut)}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
+.search{flex:1 1 220px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 14px;min-height:40px;outline:none}
+.search:focus,.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accbg);outline:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:none;border-radius:99px;padding:6px 12px;cursor:pointer;font-size:13px;color:var(--mut)}
+.chip.on{background:var(--accbg);border-color:var(--acc);color:var(--acc)}
+.tabs{display:none}
+.board{display:grid;grid-template-columns:repeat(6,minmax(210px,1fr));gap:14px;align-items:start;overflow-x:auto;padding-bottom:8px}
+.col{min-width:0;border-radius:14px;padding:4px;transition:.15s}
+.col.over{background:var(--accbg)}
+.col h2{display:flex;align-items:center;gap:8px;margin:0 4px 12px;font-size:13px;font-weight:600;color:var(--mut);height:24px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.count{margin-left:auto;font-weight:500;padding:1px 9px;border-radius:99px;background:var(--line);font-size:12px}
+.col.full .count{background:var(--warnbg);color:var(--warn)}
+.card{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:.15s}
+.card:hover{border-color:var(--acc)}
+.card.drag{opacity:.4}
+.card.blk{border-left:3px solid var(--warn)}
+.meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut)}
+.pri{width:8px;height:8px;border-radius:50%;flex:none}
+.High{background:#e5604d}.Medium{background:#e6a23c}.Low{background:#7bb686}
+.pts{margin-left:auto;background:var(--soft);border-radius:6px;padding:0 7px;font-size:12px}
+.card p{margin:0;overflow-wrap:anywhere}
+.foot{display:flex;align-items:center;gap:6px;min-height:28px}
+.av{width:24px;height:24px;border-radius:50%;background:var(--accbg);color:var(--acc);font-size:11px;font-weight:600;display:grid;place-items:center;flex:none}
+.tag{font-size:11.5px;color:var(--warn);background:var(--warnbg);padding:1px 8px;border-radius:99px}
+.mv{margin-left:auto;display:flex;gap:4px}
+.mv button{background:var(--soft);border:0;border-radius:8px;width:32px;height:28px;cursor:pointer;color:var(--mut)}
+.mv button:hover{background:var(--accbg);color:var(--acc)}
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:22px 10px;text-align:center;color:var(--mut);font-size:13px}
+.log{margin-top:28px;font-size:13px;color:var(--mut)}
+.log button{background:none;border:0;padding:0;margin-right:16px;color:var(--acc);cursor:pointer;font-size:13px}
+dialog{border:1px solid var(--line);border-radius:16px;padding:0;background:var(--surface);color:var(--fg);width:min(480px,calc(100% - 24px));max-height:90vh;overflow:auto}
+dialog::backdrop{background:rgba(20,18,15,.4)}
+dialog form,.dbody{padding:20px}
+dialog h3{margin:0 0 16px;font-size:17px}
+.f{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.f label{font-size:12.5px;color:var(--mut)}
+.f input,.f select,.f textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px}
+.f textarea{min-height:80px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chk{flex-direction:row;align-items:center;gap:8px}.chk input{width:auto}.chk label{color:var(--fg);font-size:14px}
+.acts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:6px}
+.acts .sp{margin-right:auto}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;white-space:pre-wrap;font:13px/1.5 ui-monospace,Menlo,monospace;margin:0 0 14px;max-height:50vh;overflow:auto}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:9;display:flex;gap:14px;align-items:center;max-width:calc(100% - 24px)}
+.toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast button{background:none;border:0;color:var(--acc);cursor:pointer;font-weight:600}
+@media(max-width:720px){
+  .wrap{padding:20px 16px 40px}
+  .btns{width:100%}.btns .btn{flex:1 1 auto}
+  .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:8px 14px;cursor:pointer;font-size:14px;display:flex;gap:6px;align-items:center;min-height:40px}
+  .tabs button.on{background:var(--accbg);border-color:var(--acc);color:var(--acc)}
+  .board{display:block;overflow:visible}
+  .col{display:none;padding:0}.col.active{display:block}
+  .col h2{display:none}
+  .mv button{width:40px;height:36px}
+  dialog{margin:auto auto 0;width:100%;border-radius:16px 16px 0 0;border-bottom:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Sprint Board</h1>
+      <input class="ghost" id="goal" placeholder="Set a sprint goal…" maxlength="100" aria-label="Sprint goal">
+      <div class="bar"><i id="bar"></i></div>
+      <div class="barlbl" id="barlbl"></div>
+    </div>
+    <div class="btns">
+      <button class="btn" id="newBtn">+ New ticket</button>
+      <button class="btn main" id="ship">Ship release</button>
+      <button class="btn" id="reset">Reset</button>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="tools">
+    <input class="search" id="q" type="search" placeholder="Search tickets, keys or people" aria-label="Search">
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="board" id="board"></div>
+  <div class="log" id="log"></div>
+</div>
+
+<dialog id="dlg"><form id="form">
+  <h3 id="dtitle">New ticket</h3>
+  <div class="f"><label for="fTitle">Title</label><input id="fTitle" required maxlength="80"></div>
+  <div class="f"><label for="fDesc">Description</label><textarea id="fDesc" maxlength="400"></textarea></div>
+  <div class="two">
+    <div class="f"><label for="fPrio">Priority</label><select id="fPrio"><option>High</option><option>Medium</option><option>Low</option></select></div>
+    <div class="f"><label for="fPts">Story points</label><select id="fPts"><option>1</option><option>2</option><option selected>3</option><option>5</option><option>8</option></select></div>
+  </div>
+  <div class="f"><label for="fWho">Assignee</label><input id="fWho" maxlength="30" placeholder="Name"></div>
+  <div class="f chk"><input type="checkbox" id="fBlk"><label for="fBlk">Blocked (can't move forward until cleared)</label></div>
+  <div class="acts"><button type="button" class="btn danger sp" id="fDel">Delete</button><button type="button" class="btn" id="fCancel">Cancel</button><button class="btn main">Save</button></div>
+</form></dialog>
+
+<dialog id="notes"><div class="dbody">
+  <h3 id="ntitle">Release notes</h3><pre id="npre"></pre>
+  <div class="acts"><button class="btn" id="nClose">Close</button><button class="btn main" id="nCopy">Copy Markdown</button></div>
+</div></dialog>
+<div class="toast" id="toast"><span id="tmsg"></span><button id="tundo" hidden>Undo</button></div>
+
+<script>
+const COLS=["Backlog","In Progress","In Review","QA","Ready for Release","Done"];
+const COLORS=["#b8b3aa","#4f6bed","#a17be8","#e6a23c","#3fa88f","#7bb686"];
+const WIP={"In Progress":3,"In Review":3};
+const KEY="sprintboard.v3",DAY=864e5;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function seed(){
+  const t=Date.now();
+  return {n:109,name:"Sprint 12",goal:"Ship invoice export to production",releases:[{v:"v1.0.0",at:t-3*DAY,items:[{id:"PROJ-101",title:"User login and roles"},{id:"PROJ-102",title:"Invoice list view"}]}],tickets:[
+    {id:"PROJ-101",title:"User login and roles",p:"High",pts:5,who:"Asha",s:"Done",st:t-8*DAY,dn:t-3*DAY},
+    {id:"PROJ-102",title:"Invoice list view",p:"Medium",pts:3,who:"Ravi",s:"Done",st:t-7*DAY,dn:t-3*DAY},
+    {id:"PROJ-103",title:"Invoice PDF export",p:"High",pts:5,who:"Asha",s:"Ready for Release",st:t-4*DAY},
+    {id:"PROJ-104",title:"Fix session timeout bug",p:"High",pts:2,who:"Meera",s:"QA",st:t-2*DAY},
+    {id:"PROJ-105",title:"Email invoice to client",p:"Medium",pts:3,who:"Ravi",s:"In Progress",st:t-DAY},
+    {id:"PROJ-106",title:"Dashboard revenue chart",p:"Low",pts:5,who:"",s:"Backlog"},
+    {id:"PROJ-107",title:"Role-based delete permissions",p:"Medium",pts:3,who:"Meera",s:"In Review",st:t-DAY,blk:true},
+    {id:"PROJ-108",title:"Dark mode polish",p:"Low",pts:2,who:"",s:"Backlog"}]};
+}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));return d&&d.tickets?d:seed()}catch(e){return seed()}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+let S=load(),query="",pf="All",active=0,editing=null,lastDel=null,tt;
+
+function toast(msg,undo){
+  $("tmsg").textContent=msg;$("tundo").hidden=!undo;$("toast").classList.add("show");
+  clearTimeout(tt);tt=setTimeout(()=>$("toast").classList.remove("show"),undo?5000:2800);
+}
+function move(t,to){
+  const from=COLS.indexOf(t.s);
+  if(to===from||to<0||to>=COLS.length)return;
+  if(t.blk&&to>from){toast(t.id+" is blocked. Clear the block first.");return}
+  t.s=COLS[to];
+  if(to===1&&!t.st)t.st=Date.now();
+  if(to===5)t.dn=Date.now();else delete t.dn;
+  const lim=WIP[t.s];
+  render();
+  if(lim&&S.tickets.filter(x=>x.s===t.s).length>lim)toast(t.s+" is over its WIP limit of "+lim);
+}
+function match(t){
+  return (pf==="All"||t.p===pf)&&(!query||(t.title+" "+t.id+" "+(t.who||"")).toLowerCase().includes(query));
+}
+function cardHTML(t,i){
+  const ini=(t.who||"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();
+  return `<article class="card ${t.blk?"blk":""}" draggable="true" data-id="${t.id}">
+    <div class="meta"><i class="pri ${t.p}" title="${t.p} priority"></i>${t.id}<span class="pts">${t.pts||0} pt</span></div>
+    <p>${esc(t.title)}</p>
+    <div class="foot">${ini?`<span class="av" title="${esc(t.who)}">${esc(ini)}</span>`:""}${t.blk?`<span class="tag">Blocked</span>`:""}
+      <span class="mv">${i>0?`<button data-mv="-1" data-id="${t.id}" aria-label="Move ${t.id} back">←</button>`:""}${i<5?`<button data-mv="1" data-id="${t.id}" aria-label="Move ${t.id} forward">→</button>`:""}</span></div></article>`;
+}
+function render(){
+  const T=S.tickets,pts=x=>x.reduce((a,t)=>a+(+t.pts||0),0);
+  const done=T.filter(t=>t.s==="Done"),total=pts(T),dp=pts(done);
+  $("goal").value=S.goal||"";
+  $("bar").style.width=(total?Math.round(dp/total*100):0)+"%";
+  $("barlbl").textContent=`${S.name} · ${dp} of ${total} points done (${total?Math.round(dp/total*100):0}%)`;
+  const ct=done.filter(t=>t.st&&t.dn).map(t=>t.dn-t.st);
+  const avg=ct.length?(ct.reduce((a,b)=>a+b,0)/ct.length/DAY).toFixed(1)+" days":"–";
+  const ready=T.filter(t=>t.s==="Ready for Release"&&!t.blk).length;
+  $("stats").innerHTML=[["Avg cycle time",avg],["In progress",T.filter(t=>WIP[t.s]).length],["Blocked",T.filter(t=>t.blk&&t.s!=="Done").length],["Ready to ship",ready],["Releases",S.releases.length]]
+    .map(([l,v])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+  $("chips").innerHTML=["All","High","Medium","Low"].map(p=>`<button class="chip ${pf===p?"on":""}" data-pf="${p}">${p}</button>`).join("");
+  $("tabs").innerHTML=COLS.map((c,i)=>`<button role="tab" class="${active===i?"on":""}" data-tab="${i}">${c} <small>${T.filter(t=>t.s===c).length}</small></button>`).join("");
+  $("board").innerHTML=COLS.map((c,i)=>{
+    const all=T.filter(t=>t.s===c),list=all.filter(match),lim=WIP[c];
+    return `<section class="col ${lim&&all.length>lim?"full":""} ${active===i?"active":""}" data-col="${i}" aria-label="${c}">
+      <h2><i class="dot" style="--c:${COLORS[i]}"></i>${c}<span class="count" title="${lim?"WIP limit "+lim:"Tickets"}">${all.length}${lim?" / "+lim:""}</span></h2>`+
+      (list.length?list.map(t=>cardHTML(t,i)).join(""):`<div class="empty">${all.length?"No matches":"Nothing here"}</div>`)+`</section>`;
+  }).join("");
+  const sh=$("ship");sh.disabled=!ready;sh.textContent=ready?`Ship release (${ready})`:"Ship release";
+  $("log").innerHTML=S.releases.length?"Releases: "+S.releases.map((r,i)=>`<button data-rel="${i}">${r.v} · ${new Date(r.at).toLocaleDateString()}</button>`).reverse().join(""):"No releases yet.";
+  save();
+}
+function openEdit(id){
+  editing=id?S.tickets.find(t=>t.id===id):null;
+  const t=editing||{title:"",desc:"",p:"Medium",pts:3,who:"",blk:false};
+  $("dtitle").textContent=editing?"Edit "+t.id:"New ticket";
+  $("fTitle").value=t.title;$("fDesc").value=t.desc||"";$("fPrio").value=t.p;$("fPts").value=t.pts;$("fWho").value=t.who||"";$("fBlk").checked=!!t.blk;
+  $("fDel").style.display=editing?"":"none";
+  $("dlg").showModal();
+}
+$("newBtn").onclick=()=>openEdit();
+$("fCancel").onclick=()=>$("dlg").close();
+$("form").onsubmit=e=>{
+  e.preventDefault();
+  const v={title:$("fTitle").value.trim(),desc:$("fDesc").value.trim(),p:$("fPrio").value,pts:+$("fPts").value,who:$("fWho").value.trim(),blk:$("fBlk").checked};
+  if(!v.title)return;
+  if(editing)Object.assign(editing,v);else S.tickets.push({id:"PROJ-"+S.n++,s:COLS[active===5?0:active],...v});
+  $("dlg").close();render();toast(editing?"Ticket updated":"Ticket added");
+};
+$("fDel").onclick=()=>{
+  lastDel={t:editing,i:S.tickets.indexOf(editing)};
+  S.tickets=S.tickets.filter(t=>t!==editing);$("dlg").close();render();toast(editing.id+" deleted",true);
+};
+$("tundo").onclick=()=>{if(lastDel){S.tickets.splice(lastDel.i,0,lastDel.t);lastDel=null;render();$("toast").classList.remove("show")}};
+
+$("board").onclick=e=>{
+  const b=e.target.closest("[data-mv]");
+  if(b){const t=S.tickets.find(x=>x.id===b.dataset.id);move(t,COLS.indexOf(t.s)+ +b.dataset.mv);return}
+  const c=e.target.closest(".card");if(c)openEdit(c.dataset.id);
+};
+$("tabs").onclick=e=>{const b=e.target.closest("[data-tab]");if(b){active=+b.dataset.tab;render()}};
+$("chips").onclick=e=>{const b=e.target.closest("[data-pf]");if(b){pf=b.dataset.pf;render()}};
+$("q").oninput=e=>{query=e.target.value.trim().toLowerCase();render()};
+$("goal").onchange=e=>{S.goal=e.target.value.trim();save()};
+const board=$("board");
+board.ondragstart=e=>{const c=e.target.closest(".card");if(c){e.dataTransfer.setData("text/plain",c.dataset.id);c.classList.add("drag")}};
+board.ondragend=e=>{const c=e.target.closest(".card");if(c)c.classList.remove("drag")};
+board.ondragover=e=>{const c=e.target.closest(".col");if(c){e.preventDefault();c.classList.add("over")}};
+board.ondragleave=e=>{const c=e.target.closest(".col");if(c)c.classList.remove("over")};
+board.ondrop=e=>{
+  e.preventDefault();
+  const c=e.target.closest(".col"),t=S.tickets.find(x=>x.id===e.dataTransfer.getData("text/plain"));
+  if(c&&t)move(t,+c.dataset.col);else render();
+};
+function notes(r){return `## ${r.v} (${new Date(r.at).toLocaleDateString()})\n\n`+r.items.map(i=>`- ${i.id}: ${i.title}`).join("\n")}
+function showNotes(r){$("ntitle").textContent="Release "+r.v;$("npre").textContent=notes(r);$("notes").showModal()}
+$("ship").onclick=()=>{
+  const r=S.tickets.filter(t=>t.s==="Ready for Release"&&!t.blk);
+  if(!r.length)return;
+  const rel={v:"v1."+S.releases.length+".0",at:Date.now(),items:r.map(t=>({id:t.id,title:t.title}))};
+  r.forEach(t=>{t.s="Done";t.dn=Date.now()});
+  S.releases.push(rel);render();showNotes(rel);
+};
+$("log").onclick=e=>{const b=e.target.closest("[data-rel]");if(b)showNotes(S.releases[+b.dataset.rel])};
+$("nClose").onclick=()=>$("notes").close();
+$("nCopy").onclick=async()=>{try{await navigator.clipboard.writeText($("npre").textContent);toast("Copied to clipboard")}catch(e){toast("Select the text and copy manually")}};
+$("reset").onclick=()=>{if(confirm("Reset the board to demo data?")){S=seed();render()}};
+render();
+</script>
+</body>
+</html>
