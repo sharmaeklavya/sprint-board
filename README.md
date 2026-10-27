@@ -2,8 +2,6 @@
 
 A lightweight Kanban board that enforces the delivery habits I use with engineering teams: **work-in-progress limits, tracked cycle time and a release gate.**
 
-**Live demo:** _add your Netlify link here_
-
 ## Features
 
 - Six-stage workflow: Backlog → In Progress → In Review → QA → Ready for Release → Done
