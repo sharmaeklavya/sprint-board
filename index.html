@@ -253,6 +253,7 @@ board.ondrop=e=>{
   const c=e.target.closest(".col"),t=S.tickets.find(x=>x.id===e.dataTransfer.getData("text/plain"));
   if(c&&t)move(t,+c.dataset.col);else render();
 };
+function notes(r){return `## ${r.v} (${new Date(r.at).toLocaleDateString()})\n\n`+r.items.map(i=>`- ${i.id}: ${i.title}`).join("\n")}
 function showNotes(r){$("ntitle").textContent="Release "+r.v;$("npre").textContent=notes(r);$("notes").showModal()}
 $("ship").onclick=()=>{
   const r=S.tickets.filter(t=>t.s==="Ready for Release"&&!t.blk);
